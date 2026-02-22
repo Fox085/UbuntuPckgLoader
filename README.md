@@ -2,13 +2,13 @@
   Русский | English
 </p>
 <p>
-  Итак, у вас есть Ubuntu, но у нее нет доступа в интернет. Вы хотите просто написать программку на питоне и вам понадобилась какая-либо библиотека. Ее можно спокойно скачать на сторонней машине через пакетный менеджер питона и далее ее можно установить через пакетный менеджер pip на нашей закрытой от интернета Ubuntu. Но в Ubuntu по умолчанию в python не установили pip, потому что зачем он там нужен? <i>У всех же система подключена к интернету, абсолютно никогда не может возникнуть ситуация, чтобы линукс был <b>без</b> интернета, это ведь невозможно!</i> Помощь в интернете для решения этой тривиальной проблемы затянет вас часа на 2, или 4, или вообще несколько дней.
+  Итак, у вас есть Ubuntu, но у нее нет доступа в интернет. Вы хотите просто написать программку на питоне и вам понадобилась какая-либо библиотека. Ее можно спокойно скачать на сторонней машине через пакетный менеджер питона и далее ее можно установить через пакетный менеджер pip на нашей закрытой от интернета Ubuntu. Но в Ubuntu по умолчанию в python не установили pip. Помощь в интернете для решения этой тривиальной проблемы затянет вас часа на 2, или 4, или вообще несколько дней.
 </p>
 <p>
-  У ubuntu есть сайт packages.ubuntu.com. Этот сайт держит ссылки на все библиотеки Ubuntu. Но скачивать оттуда библиотеку с зависимостями вас заставляют ручками, потому что опять же "У всех ubuntu подключена к интернету и невозможно иначе".
+  У ubuntu есть сайт packages.ubuntu.com. Этот сайт держит ссылки на все библиотеки Ubuntu. Но скачивать оттуда библиотеку с зависимостями вас заставляют ручками, что очень неудобно.
 </p>
 <p>
-  Короче, эта программа является скраппером библиотек с этого сайта. Захотели скачать python3.10-venv? Зашли на packages.ubuntu.com, нашли там стартовую библиотеку, которую вы хотите скачать, копируете из браузера ссылку и вставляете в эту программу. Ждете, пока программа отработает - и вуаля! Нужный вам пакет и все его 64 зависимости скачаны в формате .deb! Переносите их на изолированную машину и <code>sudo dpkg -i *.deb</code> их (сначала запакуйте для удобства в какой-нибудь zip)!
+  Эта программа является скраппером библиотек с этого сайта. Захотели скачать python3.10-venv? Зашли на packages.ubuntu.com, нашли там стартовую библиотеку, которую вы хотите скачать, копируете из браузера ссылку и вставляете в эту программу. Ждете, пока программа отработает - и вуаля! Нужный вам пакет и все его 64 зависимости скачаны в формате .deb! Переносите их на изолированную машину и <code>sudo dpkg -i *.deb</code> их (сначала запакуйте для удобства в какой-нибудь zip)!
 </p>
 <p>
   Я сравнил вывод этой программы с результатом <code>apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances xrdp</code> (спасибо panticz с stackoverflow за ответ на вопрос 13756800) и вывод этой программы совпал по количеству файлов. Некоторые файлы называются по другому, потому что ubuntu при загрузке зачем-то в названия файлов пихает всякие "1%3a" или "2%3a". А так, все работает.
@@ -18,6 +18,9 @@
 </p>
 <p>
   Прикрутил внутрь argparse, где расписал принимаемые мной аргументы.
+</p>
+<p>
+  При разработке обновления и адекватного рабочего состояния программы обнаружил, что на этом сайте зачем-то пишут, мол у библиотеки есть 5+ реализаций под все платформы, но когда заходишь для скачивания - там пусто. Внезапно. Пакеты amd64 есть, а они в основном единственные нужны. 
 </p>
 
 <p>
@@ -29,7 +32,7 @@
 <p>English</p>
 
 <p>
-  Say, you have Ubuntu, but it doesn't have access to internet. You just want to write some simple python script and you require some library. You can download it on different machine using python package manager and then install it offline using pip here. But Ubuntu desktop 22.04, which you are currently using, does not have preinstalled pip, because god forbid, it's like you need 66 packages to install and 30MB in size! It's clearly too big for 4,43GB image to have python3-pip preinstalled >:( The whole ordeal to solve this hassle will take 2 hours, maybe 4, maybe even a day, or two... the problem, that's literally can be solved if there was any way to automatically collect this packages with all of it dependencies on machines, that does not have ubuntu, but have access to internet.
+  Say, you have Ubuntu, but it doesn't have access to internet. You just want to write some simple python script and you require some library. You can download it on different machine using python package manager and then install it offline using pip here. But Ubuntu desktop 22.04, which you are currently using, does not have preinstalled pip, because god forbid, it's like you need 66 packages to install and 30MB in size! It's clearly too big for 4,43GB image to have python3-pip preinstalled 😠 The whole ordeal to solve this hassle will take 2 hours, maybe 4, maybe even a day, or two... the problem, that's literally can be solved if there was any way to automatically collect this packages with all of it dependencies on machines, that does not have ubuntu, but have access to internet.
 </p>
 <p>
   Ubuntu have a website packages.ubuntu.com that hosts links to ubuntu libraries. But it doesn't have automated tool to like get needed library and collect all of it dependecies. They discourage you from using this site and recommend you to use package manager, because everybody have ubuntu, connected to internet. It's not like, only 4% computers in the world are linux-bases of which the are a third of ubuntu, everybody have ubuntu with internet, of course!
@@ -46,13 +49,26 @@
 <p>
   I also added argparse, where i written all accepted arguments.
 </p>
+<p>
+  While developing update found out that this website for some unknown reason writes that package has like 5+ platform versions, but when you try to check it out, they happen to just not have load links. I... didn't expect this. Well, they have amd64 packages and they mostly the only ones you need. But it's very strange, are they aware of it? Is it supposed to be so? Doubt it. But to report bug on their website, they require registration, so i'm out.
+</p>
+
+<p>
+  Here is the list of architectures for https://packages.ubuntu.com/jammy/libc6, green = there is download link, red = there is none:
+</p>
+
+```diff
++ amd64
+- arm64
+- armhf
++ i386
+- ppc64el
+- riscv64
+- s390x
+```
 
 <p>
   Usage example:
 </p>
 <pre>python UbuntuPckgLoader.py https://packages.ubuntu.com/jammy-updates/python3.10-venv</pre>
 <pre>python UbuntuPckgLoader.py https://packages.ubuntu.com/jammy-updates/python3-pip</pre>
-
-<p>
-  Теперь, написав описание к этой программе, я понял, что надо бы ее будет потом переписать на NodeJS, чтобы можно было запускать вообще на любой машине (исполняемые файлы NodeJS можно скачать в мобильном виде и запускать без прав администратора)
-</p>
